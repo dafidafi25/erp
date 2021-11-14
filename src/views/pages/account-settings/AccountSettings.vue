@@ -1,7 +1,7 @@
 <template>
   <v-card id="account-setting-card" style="margin-top:62px" class="rounded-0">
     <!-- tabs -->
-    <v-tabs v-model="tab" show-arrows>
+    <v-tabs v-model="tab" show-arrows color="error">
       <v-tab v-for="tab in tabs" :key="tab.icon">
         <v-icon size="20" class="me-3">
           {{ tab.icon }}

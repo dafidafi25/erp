@@ -24,7 +24,7 @@
           </v-col>
 
           <v-col cols="12">
-            <v-btn color="primary" class="me-3 mt-4">
+            <v-btn color="error" class="me-3 mt-4">
               Save changes
             </v-btn>
             <v-btn color="secondary" outlined class="mt-4" type="reset" @click.prevent="resetForm">

@@ -10,7 +10,7 @@
             <v-text-field label="Nama Akun 1*" required color="error" v-model="nama_akun_1" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 2*" required color="error"></v-text-field>
+            <v-text-field label="Nama Akun 2*" required color="error" v-model="nama_akun_2"></v-text-field>
           </v-col>
         </v-row>
       </v-container>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { EventBus } from './event-bus.js'
 export default {
   props: ['data'],
   data() {
@@ -38,6 +39,7 @@ export default {
       id: this.data,
     }
   },
+
   methods: {
     updateData() {
       this.$store
@@ -68,12 +70,14 @@ export default {
     },
   },
   mounted() {
-    this.getDataId(this.id)
+    this.getDataId(this.data)
   },
-  watch: {
-    data(newVal) {
-      this.getDataId(newVal)
-    },
+  created() {
+    EventBus.$on('onUpdate', value => {
+      this.id = value
+      console.log(this.id)
+      this.getDataId(value)
+    })
   },
 }
 </script>

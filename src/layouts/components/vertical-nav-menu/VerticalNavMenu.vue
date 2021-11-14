@@ -23,36 +23,39 @@
     <v-list expand shaped class="vertical-nav-menu-items pr-5">
       <nav-menu-link title="Home" :to="{ name: 'home' }" :icon="icons.mdiHomeOutline"></nav-menu-link>
       <nav-menu-group title="Master" :icon="icons.mdiCity">
-        <nav-menu-link title="Satuan"></nav-menu-link>
+        <nav-menu-link title="Satuan" :to="{ name: 'master-satuan' }"></nav-menu-link>
         <nav-menu-link title="Account" :to="{ name: 'master-account' }"></nav-menu-link>
-        <nav-menu-link title="User Group"></nav-menu-link>
-        <nav-menu-link title="Karyawan"></nav-menu-link>
-        <nav-menu-link title="Alamat"></nav-menu-link>
-        <nav-menu-link title="Item"></nav-menu-link>
-        <nav-menu-link title="Coa"></nav-menu-link>
-        <nav-menu-link title="Assett"></nav-menu-link>
-        <nav-menu-link title="Barcode"></nav-menu-link>
-        <nav-menu-link title="Jangka Waktu"></nav-menu-link>
-        <nav-menu-link title="Item Minus"></nav-menu-link>
-        <nav-menu-link title="Saldo Awal"></nav-menu-link>
-        <nav-menu-link title="Person"></nav-menu-link>
+        <nav-menu-link title="User Group" :to="{ name: 'master-user' }"></nav-menu-link>
+        <nav-menu-link title="Karyawan" :to="{ name: 'master-karyawan' }"></nav-menu-link>
+        <nav-menu-link title="Alamat" :to="{ name: 'master-alamat' }"></nav-menu-link>
+        <nav-menu-link title="Item" :to="{ name: 'master-item' }"></nav-menu-link>
+        <nav-menu-link title="Coa" :to="{ name: 'master-coa' }"></nav-menu-link>
+        <nav-menu-link title="Asset" :to="{ name: 'master-asset' }"></nav-menu-link>
+        <nav-menu-link title="Barcode" :to="{ name: 'master-barcode' }"></nav-menu-link>
+        <nav-menu-link title="Jangka Waktu" :to="{ name: 'master-jangka-waktu' }"></nav-menu-link>
+        <nav-menu-link title="Item Minus" :to="{ name: 'master-item-minus' }"></nav-menu-link>
+        <nav-menu-link title="Saldo Awal" :to="{ name: 'master-saldo-awal' }"></nav-menu-link>
+        <nav-menu-link title="Person" :to="{ name: 'master-person' }"></nav-menu-link>
       </nav-menu-group>
       <nav-menu-group title="Inventory" :icon="icons.mdiHockeyPuck">
-        <nav-menu-link title="Item" :icon="icons.mdiPackage" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Kategori" :icon="icons.mdiInformation" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Satuan" :icon="icons.mdiClipboardList" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="Stok Item" class="ml-5"></nav-menu-link>
       </nav-menu-group>
-      <nav-menu-group title="Pembelian" :icon="icons.mdiAccountGroup">
-        <nav-menu-link title="Data Karyawan" :icon="icons.mdiAccountDetails" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Tipe Karyawan" :icon="icons.mdiLabel" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Jam Kerja" :icon="icons.mdiClock" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Role" :icon="icons.mdiFormatListBulletedType" class="ml-5"></nav-menu-link>
+      <nav-menu-group title="Pembelian" :icon="icons.mdiCreditCard">
+        <nav-menu-link title="Request PO" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="PO Process" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="Alamat" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="History PO" class="ml-5"></nav-menu-link>
       </nav-menu-group>
-      <nav-menu-group title="Administrasi" :icon="icons.mdiAccountGroup">
-        <nav-menu-link title="Data Karyawan" :icon="icons.mdiAccountDetails" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Tipe Karyawan" :icon="icons.mdiLabel" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Jam Kerja" :icon="icons.mdiClock" class="ml-5"></nav-menu-link>
-        <nav-menu-link title="Role" :icon="icons.mdiFormatListBulletedType" class="ml-5"></nav-menu-link>
+      <nav-menu-group title="Penjualan" :icon="icons.mdiShoppingOutline">
+        <nav-menu-link title="SO Request" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="SO Kasir" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="History SO Kerja" class="ml-5"></nav-menu-link>
+      </nav-menu-group>
+      <nav-menu-group title="Administrasi" :icon="icons.mdiDatabase">
+        <nav-menu-link title="Customer" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="Department Karyawan" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="Jam Kerja" class="ml-5"></nav-menu-link>
+        <nav-menu-link title="Role" class="ml-5"></nav-menu-link>
       </nav-menu-group>
       <!-- <v-divider></v-divider>
       <nav-menu-link title="Account Settings" :to="{ name: 'pages-account-settings' }" :icon="icons.mdiAccountCogOutline"></nav-menu-link>
@@ -94,6 +97,7 @@ import {
   mdiFileOutline,
   mdiFormSelect,
   mdiAccountCogOutline,
+  mdiShoppingOutline,
 } from '@mdi/js'
 import NavMenuGroup from './components/NavMenuGroup.vue'
 import NavMenuLink from './components/NavMenuLink.vue'
@@ -108,29 +112,6 @@ export default {
       type: Boolean,
       default: null,
     },
-  },
-  data() {
-    return {
-      menu: [
-        { title: 'Absensi', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'RAB', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'RAPP', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'RFQ Lapangan', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Berita Acara', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'RFQ Transaksi', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'PORD', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Bukti Item Datang', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Petty Cash', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Gudang', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Barang Retur', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Opname', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'FPM', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Hutang', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Piutang', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Rekap Pembelian', icon: 'icons.mdiAlphaTBoxOutline}' },
-        { title: 'Import PORD', icon: 'icons.mdiAlphaTBoxOutline}' },
-      ],
-    }
   },
   setup() {
     return {
@@ -159,6 +140,7 @@ export default {
         mdiFileOutline,
         mdiFormSelect,
         mdiAccountCogOutline,
+        mdiShoppingOutline,
       },
     }
   },

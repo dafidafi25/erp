@@ -108,6 +108,7 @@
 
 <script>
 import { mdiPencilOutline, mdiTrashCanOutline, mdiChevronUp, mdiChevronDown } from '@mdi/js'
+import { EventBus } from './event-bus.js'
 var timeOut
 export default {
   data() {
@@ -135,7 +136,7 @@ export default {
   },
   methods: {
     onUpdate(index) {
-      this.$emit('onUpdateClicked', index)
+      this.$emit('onUpdateClicked', this.items[index].id)
     },
     onDelete(index) {
       this.$store

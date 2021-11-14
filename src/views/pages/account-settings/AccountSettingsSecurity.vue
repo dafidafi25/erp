@@ -51,7 +51,7 @@
       <div class="pa-3">
         <!-- action buttons -->
         <v-card-text>
-          <v-btn color="primary" class="me-3 mt-3">
+          <v-btn color="error" class="me-3 mt-3">
             Save changes
           </v-btn>
           <v-btn color="secondary" outlined class="mt-3">
