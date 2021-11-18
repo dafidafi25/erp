@@ -10,7 +10,7 @@
             <v-text-field label="Nama Akun 1*" required color="error" v-model="nama_akun_1" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 2*" required color="error"></v-text-field>
+            <v-text-field label="Nama Akun 2*" required color="error" v-model="nama_akun_2"></v-text-field>
           </v-col>
         </v-row>
       </v-container>

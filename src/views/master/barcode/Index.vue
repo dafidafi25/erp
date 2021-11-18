@@ -10,12 +10,11 @@
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>
-
+        <v-tab-item> </v-tab-item>
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>
       </v-tabs-items>
-
       <!-- loading Dialog -->
     </v-card>
 
@@ -42,8 +41,9 @@ export default {
       tab: null,
       tabs: [
         {
-          title: 'Aktif',
+          title: 'Barcode',
         },
+
         {
           title: 'Non-Aktif',
         },

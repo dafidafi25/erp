@@ -2,12 +2,7 @@
   <div>
     <!-- basic -->
 
-    <index-table
-      @onLoading="loadingDialog"
-      @onDeleteClicked="deleteItem"
-      @onAddClicked="addItem"
-      @onUpdateClicked="updateItem"
-    ></index-table>
+    <index-table @onLoading="loadingDialog"></index-table>
 
     <!-- loading Dialog -->
     <v-dialog width="300" v-model="loading">
@@ -18,56 +13,28 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <!-- add Dialog -->
-    <v-dialog max-width="600px" v-model="TriggerAddModal">
-      <v-card>
-        <add-modal @onAddClicked="addItem" />
-      </v-card>
-    </v-dialog>
-    <!-- edit Dialog -->
-    <v-dialog max-width="600px" v-model="TriggerUpdateModal">
-      <v-card>
-        <edit-modal @onUpdateClicked="updateItem" :data="data" />
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script>
 import IndexTable from './IndexTable.vue'
-import AddModal from './AddModal.vue'
-import EditModal from './EditModal.vue'
-import { EventBus } from './event-bus.js'
 
 export default {
   data() {
     return {
       loading: null,
-      TriggerAddModal: null,
-      TriggerUpdateModal: null,
-      data: null,
     }
   },
   components: {
     IndexTable,
-    AddModal,
-    EditModal,
   },
   methods: {
-    deleteItem(index) {
-      console.log(index)
-    },
     loadingDialog(value) {
       this.$emit('onLoading', value)
     },
-    updateItem(value) {
-      this.TriggerUpdateModal = !this.TriggerUpdateModal
-      this.data = value
-      EventBus.$emit('onUpdate', value)
-    },
-    addItem() {
-      this.TriggerAddModal = !this.TriggerAddModal
-    },
+  },
+  mounted() {
+    this.getList()
   },
 }
 </script>

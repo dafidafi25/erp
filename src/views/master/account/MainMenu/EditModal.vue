@@ -36,6 +36,12 @@ export default {
     return {
       nama_akun_1: null,
       nama_akun_2: null,
+      parent_flag: null,
+      parent_id: null,
+      active_flag: null,
+      neraca_flag: null,
+      status_flag: null,
+      primary_flag: null,
       id: this.data,
     }
   },
@@ -43,15 +49,16 @@ export default {
   methods: {
     updateData() {
       this.$store
-        .dispatch('ADD_ACCOUNT', {
+        .dispatch('UPDATE_ACCOUNT', {
           account_name: this.nama_akun_1,
           account_name2: this.nama_akun_2,
-          parent_flag: null,
-          parent_id: null,
-          active_flag: 1,
-          neraca_flag: 1,
-          status_flag: 1,
-          primary_flag: 1,
+          parent_flag: this.parent_flag,
+          parent_id: this.parent_id,
+          active_flag: this.active_flag,
+          neraca_flag: this.neraca_flag,
+          status_flag: this.status_flag,
+          primary_flag: this.primary_flag,
+          id: this.id,
         })
         .then(() => {
           this.$router.go()
@@ -66,6 +73,12 @@ export default {
         .then(res => {
           this.nama_akun_1 = res.data.response_data.account_name
           this.nama_akun_2 = res.data.response_data.account_name2
+          this.parent_flag = res.data.response_data.parent_flag
+          this.parent_id = res.data.response_data.parent_id
+          this.active_flag = res.data.response_data.active_flag
+          this.neraca_flag = res.data.response_data.neraca_flag
+          this.status_flag = res.data.response_data.status_flag
+          this.primary_flag = res.data.response_data.primary_flag
         })
     },
   },

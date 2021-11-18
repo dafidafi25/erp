@@ -21,13 +21,13 @@
     <!-- add Dialog -->
     <v-dialog max-width="600px" v-model="TriggerAddModal">
       <v-card>
-        <add-modal @onAddClicked="addItem" />
+        <add-modal @onAddClicked="addItem" :province_list="province_list" />
       </v-card>
     </v-dialog>
     <!-- edit Dialog -->
     <v-dialog max-width="600px" v-model="TriggerUpdateModal">
       <v-card>
-        <edit-modal @onUpdateClicked="updateItem" :data="data" />
+        <edit-modal @onUpdateClicked="updateItem" :data="data" :province_list="province_list" />
       </v-card>
     </v-dialog>
   </div>
@@ -46,6 +46,7 @@ export default {
       TriggerAddModal: null,
       TriggerUpdateModal: null,
       data: null,
+      province_list: null,
     }
   },
   components: {
@@ -62,12 +63,23 @@ export default {
     },
     updateItem(value) {
       this.TriggerUpdateModal = !this.TriggerUpdateModal
-      this.data = value
-      EventBus.$emit('onUpdate', value)
+      if (value != undefined) {
+        this.data = value
+        EventBus.$emit('onUpdate', value)
+      }
     },
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal
     },
+    async getProvinceList() {
+      await this.$store
+        .dispatch('GET_PROVINCE_LIST')
+        .then(res => (this.province_list = res.data.response_data))
+        .catch(err => console.log(err))
+    },
+  },
+  mounted() {
+    this.getProvinceList()
   },
 }
 </script>

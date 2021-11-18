@@ -5,7 +5,6 @@
       <v-btn icon @click="filter.show = !filter.show" class="mr-auto">
         <v-icon>{{ filter.show ? icons.mdiChevronUp : icons.mdiChevronDown }}</v-icon>
       </v-btn>
-      <v-btn class="mr-5" color="error" @click="$emit('onAddClicked')">Add Data</v-btn>
     </div>
 
     <v-expand-transition>
@@ -13,19 +12,27 @@
         <v-divider></v-divider>
         <div class="d-flex align-center pl-5 pr-5">
           <v-text-field
-            label="Nama Akun"
+            label="Barcode"
             style="max-width:250px"
             color="error"
             @input="debounceInput"
-            v-model="filter.nama_akun"
+            v-model="filter.barcode"
           ></v-text-field>
           <v-text-field
-            label="Kode Akun"
+            label="Nama Item"
+            style="max-width:250px"
+            color="error"
+            @input="debounceInput"
+            v-model="filter.item_name"
+            class="ml-5"
+          ></v-text-field>
+          <v-text-field
+            label="Kode Item"
             style="max-width:250px"
             class="ml-5"
             color="error"
             @input="debounceInput"
-            v-model="filter.kode_akun"
+            v-model="filter.kode_item"
           ></v-text-field>
           <v-btn class="ml-5" color="error" @click="onResetFilter">Reset</v-btn>
         </div>
@@ -35,40 +42,33 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-uppercase">
-              Kode Account
-            </th>
-            <th class="text-center text-uppercase">
-              Nama Account
-            </th>
-            <th class="text-center text-uppercase">
-              Tipe Account
-            </th>
-            <th class="text-center text-uppercase">
-              Action
+            <th v-for="(item, index) in fields" :key="index" :class="item.class">
+              {{ item.name }}
             </th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.account_code }}</td>
             <td>
-              {{ item.account_name }}
+              {{ item.barcode }}
             </td>
             <td class="text-center">
-              {{ item.account_type_id }}
+              {{ item.kode_item }}
             </td>
             <td class="text-center">
-              <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
-                ><v-icon size="22">
-                  {{ icons.mdiPencilOutline }}
-                </v-icon></v-btn
-              >
-              <v-btn @click="onDelete(index)" max-width="10" min-width="2" color="error"
-                ><v-icon size="22">
-                  {{ icons.mdiTrashCanOutline }}
-                </v-icon></v-btn
-              >
+              {{ item.item_description }}
+            </td>
+            <td class="text-center">
+              {{ item.item_name }}
+            </td>
+            <td class="text-center">
+              {{ item.uom_code }}
+            </td>
+            <td class="text-center">
+              {{ item.harga_lama }}
+            </td>
+            <td class="text-center">
+              {{ item.harga_baru }}
             </td>
           </tr>
           <v-divider />
@@ -108,7 +108,6 @@
 
 <script>
 import { mdiPencilOutline, mdiTrashCanOutline, mdiChevronUp, mdiChevronDown } from '@mdi/js'
-import { EventBus } from './event-bus.js'
 var timeOut
 export default {
   data() {
@@ -129,9 +128,40 @@ export default {
       },
       filter: {
         show: false,
-        kode_akun: '',
-        nama_akun: '',
+        kode_item: '',
+        item_name: '',
+        barcode: '',
       },
+      fields: [
+        {
+          name: 'Barcode',
+          class: 'text-uppercase',
+        },
+        {
+          name: 'Kode Item',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Deskripsi Item',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Nama Item',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Satuan',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Harga Lama',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Harga Baru',
+          class: 'text-center text-uppercase',
+        },
+      ],
     }
   },
   methods: {
@@ -140,11 +170,11 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ACCOUNT', { id: this.items[index].id })
+        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
-            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
             this.updateData()
+            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
           }
           this.updateData()
         })
@@ -153,11 +183,12 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ACCOUNT', {
+        .dispatch('GET_BARCODE', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          account_code: this.filter.kode_akun,
-          account_name: this.filter.account_name,
+          kode_item: this.filter.kode_item,
+          item_name: this.filter.item_name,
+          barcode: this.filter.barcode,
         })
         .then(res => {
           this.$emit('onLoading', false)
@@ -175,9 +206,18 @@ export default {
       }, 500)
     },
     onResetFilter() {
-      this.filter.kode_akun = ''
-      this.filter.nama_akun = ''
+      this.filter.kode_item = ''
+      this.filter.item_name = ''
+      this.filter.barcode = ''
       this.debounceInput()
+    },
+    currency(index) {
+      if (this.items[index].nilai_asset != null) {
+        let conversion = this.items[index].nilai_asset.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+        return 'RP ' + conversion
+      } else {
+        return 0
+      }
     },
   },
   mounted() {

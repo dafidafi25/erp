@@ -10,12 +10,13 @@
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>
-
+        <v-tab-item>
+          <tipe-asset @onLoading="loadingDialog" />
+        </v-tab-item>
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>
       </v-tabs-items>
-
       <!-- loading Dialog -->
     </v-card>
 
@@ -32,6 +33,7 @@
 
 <script>
 import MainMenu from './MainMenu/MainMenu.vue'
+import TipeAsset from './TipeAsset/MainMenu.vue'
 export default {
   data() {
     return {
@@ -42,7 +44,10 @@ export default {
       tab: null,
       tabs: [
         {
-          title: 'Aktif',
+          title: 'Menu Asset',
+        },
+        {
+          title: 'Tipe Asset',
         },
         {
           title: 'Non-Aktif',
@@ -52,6 +57,7 @@ export default {
   },
   components: {
     MainMenu,
+    TipeAsset,
   },
   methods: {
     loadingDialog(value) {

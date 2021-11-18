@@ -35,14 +35,8 @@
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-uppercase">
-              Kode Account
-            </th>
-            <th class="text-center text-uppercase">
-              Nama Account
-            </th>
-            <th class="text-center text-uppercase">
-              Tipe Account
+            <th v-for="(item, index) in fields" :key="index" :class="item.class">
+              {{ item.name }}
             </th>
             <th class="text-center text-uppercase">
               Action
@@ -51,12 +45,32 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.account_code }}</td>
             <td>
-              {{ item.account_name }}
+              {{ item.asset_code }}
             </td>
             <td class="text-center">
-              {{ item.account_type_id }}
+              {{ item.asset_name }}
+            </td>
+            <td class="text-center">
+              {{ item.entered_qty }}
+            </td>
+            <td class="text-center">
+              {{ currency(index) }}
+            </td>
+            <td class="text-center">
+              {{ item.note }}
+            </td>
+            <td class="text-left">
+              {{ item.buying_date }}
+            </td>
+            <td class="text-center">
+              {{ item.asset_type_id }}
+            </td>
+            <td class="text-center">
+              {{ item.department_id }}
+            </td>
+            <td class="text-center">
+              {{ item.coa_id }}
             </td>
             <td class="text-center">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
@@ -129,9 +143,49 @@ export default {
       },
       filter: {
         show: false,
-        kode_akun: '',
-        nama_akun: '',
+        phone: null,
+        npwp: null,
+        city: null,
+        province: null,
       },
+      fields: [
+        {
+          name: 'Kode Asset',
+          class: 'text-uppercase',
+        },
+        {
+          name: 'Nama Asset',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Jumlah',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Nilai Asset',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Note',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Tanggal Beli',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Tipe Asset',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Department',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'COA',
+          class: 'text-center text-uppercase',
+        },
+      ],
     }
   },
   methods: {
@@ -140,11 +194,11 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ACCOUNT', { id: this.items[index].id })
+        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
-            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
             this.updateData()
+            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
           }
           this.updateData()
         })
@@ -153,11 +207,13 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ACCOUNT', {
+        .dispatch('GET_ASSET', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          account_code: this.filter.kode_akun,
-          account_name: this.filter.account_name,
+          asset_code: this.asset_code,
+          asset_name: this.asset_name,
+          start_date: this.start_date,
+          end_date: this.end_date,
         })
         .then(res => {
           this.$emit('onLoading', false)
@@ -178,6 +234,14 @@ export default {
       this.filter.kode_akun = ''
       this.filter.nama_akun = ''
       this.debounceInput()
+    },
+    currency(index) {
+      if (this.items[index].nilai_asset != null) {
+        let conversion = this.items[index].nilai_asset.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,')
+        return 'RP ' + conversion
+      } else {
+        return 0
+      }
     },
   },
   mounted() {

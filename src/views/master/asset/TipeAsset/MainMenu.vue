@@ -21,24 +21,13 @@
     <!-- add Dialog -->
     <v-dialog max-width="600px" v-model="TriggerAddModal">
       <v-card>
-        <add-modal
-          @onAddClicked="addItem"
-          :department_list="department_list"
-          :coa_list="coa_list"
-          :asset_type_list="asset_type_list"
-        />
+        <add-modal @onAddClicked="addItem" />
       </v-card>
     </v-dialog>
     <!-- edit Dialog -->
     <v-dialog max-width="600px" v-model="TriggerUpdateModal">
       <v-card>
-        <edit-modal
-          @onUpdateClicked="updateItem"
-          :data="data"
-          :department_list="department_list"
-          :coa_list="coa_list"
-          :asset_type_list="asset_type_list"
-        />
+        <edit-modal @onUpdateClicked="updateItem" :data="data" />
       </v-card>
     </v-dialog>
   </div>
@@ -83,20 +72,6 @@ export default {
     },
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal
-    },
-    async getList() {
-      await this.$store
-        .dispatch('GET_COA_LIST')
-        .then(res => (this.coa_list = res.data.response_data))
-        .catch(err => console.log(err))
-      await this.$store
-        .dispatch('GET_AT_LIST')
-        .then(res => (this.asset_type_list = res.data.response_data))
-        .catch(err => console.log(err))
-      await this.$store
-        .dispatch('GET_DEPT_LIST')
-        .then(res => (this.department_list = res.data.response_data))
-        .catch(err => console.log(err))
     },
   },
   mounted() {

@@ -21,13 +21,13 @@
     <!-- add Dialog -->
     <v-dialog max-width="600px" v-model="TriggerAddModal">
       <v-card>
-        <add-modal @onAddClicked="addItem" />
+        <add-modal @onAddClicked="addItem" :coa_list="coa_list" :account_list="account_list" />
       </v-card>
     </v-dialog>
     <!-- edit Dialog -->
     <v-dialog max-width="600px" v-model="TriggerUpdateModal">
       <v-card>
-        <edit-modal @onUpdateClicked="updateItem" :data="data" />
+        <edit-modal @onUpdateClicked="updateItem" :data="data" :coa_list="coa_list" :account_list="account_list" />
       </v-card>
     </v-dialog>
   </div>
@@ -46,6 +46,8 @@ export default {
       TriggerAddModal: null,
       TriggerUpdateModal: null,
       data: null,
+      coa_list: null,
+      account_list: null,
     }
   },
   components: {
@@ -62,12 +64,27 @@ export default {
     },
     updateItem(value) {
       this.TriggerUpdateModal = !this.TriggerUpdateModal
-      this.data = value
-      EventBus.$emit('onUpdate', value)
+      if (value != undefined) {
+        this.data = value
+        EventBus.$emit('onUpdate', value)
+      }
     },
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal
     },
+    async getList() {
+      this.$store
+        .dispatch('GET_COA_LIST')
+        .then(res => (this.coa_list = res.data.response_data))
+        .catch(err => console.log(err))
+      await this.$store
+        .dispatch('GET_ACCOUNT_LIST')
+        .then(res => (this.account_list = res))
+        .catch(err => console.log(err))
+    },
+  },
+  mounted() {
+    this.getList()
   },
 }
 </script>

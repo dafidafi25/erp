@@ -10,7 +10,7 @@ export default {
         axios
           .get('/account/list')
           .then(res => {
-            resolve(res)
+            resolve(res.data.response_data)
           })
           .catch(err => {
             reject(err)

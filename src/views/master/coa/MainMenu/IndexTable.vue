@@ -1,48 +1,15 @@
 <template>
   <div>
     <div class="d-flex align-center pl-5 py-5">
-      <div @click="filter.show = !filter.show" class="display-1">Filter</div>
-      <v-btn icon @click="filter.show = !filter.show" class="mr-auto">
-        <v-icon>{{ filter.show ? icons.mdiChevronUp : icons.mdiChevronDown }}</v-icon>
-      </v-btn>
       <v-btn class="mr-5" color="error" @click="$emit('onAddClicked')">Add Data</v-btn>
     </div>
 
-    <v-expand-transition>
-      <div v-show="filter.show">
-        <v-divider></v-divider>
-        <div class="d-flex align-center pl-5 pr-5">
-          <v-text-field
-            label="Nama Akun"
-            style="max-width:250px"
-            color="error"
-            @input="debounceInput"
-            v-model="filter.nama_akun"
-          ></v-text-field>
-          <v-text-field
-            label="Kode Akun"
-            style="max-width:250px"
-            class="ml-5"
-            color="error"
-            @input="debounceInput"
-            v-model="filter.kode_akun"
-          ></v-text-field>
-          <v-btn class="ml-5" color="error" @click="onResetFilter">Reset</v-btn>
-        </div>
-      </div>
-    </v-expand-transition>
     <v-simple-table>
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-uppercase">
-              Kode Account
-            </th>
-            <th class="text-center text-uppercase">
-              Nama Account
-            </th>
-            <th class="text-center text-uppercase">
-              Tipe Account
+            <th v-for="(item, index) in fields" :key="index" :class="item.class">
+              {{ item.name }}
             </th>
             <th class="text-center text-uppercase">
               Action
@@ -51,12 +18,14 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.account_code }}</td>
             <td>
-              {{ item.account_name }}
+              {{ item.kode }}
             </td>
             <td class="text-center">
-              {{ item.account_type_id }}
+              {{ item.nama }}
+            </td>
+            <td class="text-center">
+              {{ item.saldo_awal }}
             </td>
             <td class="text-center">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
@@ -129,9 +98,25 @@ export default {
       },
       filter: {
         show: false,
-        kode_akun: '',
-        nama_akun: '',
+        phone: null,
+        npwp: null,
+        city: null,
+        province: null,
       },
+      fields: [
+        {
+          name: 'Kode COA',
+          class: 'text-uppercase',
+        },
+        {
+          name: 'Nama',
+          class: 'text-center text-uppercase',
+        },
+        {
+          name: 'Saldo Awal',
+          class: 'text-center text-uppercase',
+        },
+      ],
     }
   },
   methods: {
@@ -140,11 +125,11 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ACCOUNT', { id: this.items[index].id })
+        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
-            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
             this.updateData()
+            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
           }
           this.updateData()
         })
@@ -153,11 +138,9 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ACCOUNT', {
+        .dispatch('GET_COA', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          account_code: this.filter.kode_akun,
-          account_name: this.filter.account_name,
         })
         .then(res => {
           this.$emit('onLoading', false)
