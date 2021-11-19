@@ -8,11 +8,37 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Tipe Asset"
+              label="Program Akun"
               required
               color="error"
-              v-model="name"
-              :rules="[v => !!v || 'Nama Tipe Asset Harus Terisi']"
+              v-model="program_account"
+              :rules="[v => !!v || 'Program Akun Harus Diisi']"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Coa"
+              required
+              color="error"
+              v-model="coa_id"
+              item-text="coa_name"
+              item-value="id"
+              :items="coa_list"
+              :rules="[v => !!v || 'Data Coa Harus Terisi']"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Catatan" required color="error" v-model="note" />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Akun"
+              required
+              color="error"
+              item-text="account_name"
+              item-value="id"
+              :items="account_list"
+              :rules="[v => !!v || 'Data Account Harus Terisi']"
             />
           </v-col>
         </v-row>
@@ -34,10 +60,13 @@
 <script>
 import { EventBus } from './event-bus.js'
 export default {
-  props: ['data'],
+  props: ['data', 'account_list', 'coa_list'],
   data() {
     return {
-      name: '',
+      program_account: '',
+      coa_id: null,
+      note: '',
+      account_id: null,
       valid: true,
       id: null,
     }
@@ -55,18 +84,6 @@ export default {
           })
           .catch(err => console.log(err))
       }
-    },
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${day}-${month}-${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     async getDataId(id) {
       console.log(id)

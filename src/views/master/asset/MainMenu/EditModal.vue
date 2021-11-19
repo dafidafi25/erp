@@ -35,7 +35,6 @@
                   hint="dd-mm-yy format"
                   persistent-hint
                   v-bind="attrs"
-                  @blur="date = parseDate(dateFormatted)"
                   v-on="on"
                   color="error"
                 ></v-text-field>
@@ -131,7 +130,7 @@ export default {
             entered_qty: this.entered_qty,
             nilai_asset: this.nilai_asset,
             note: this.note,
-            buying_date: this.buying_date,
+            buying_date: this.dateFormatted,
             asset_type_id: this.asset_type_id,
             department_id: this.department_id,
             coa_id: this.coa_id,
@@ -148,12 +147,6 @@ export default {
 
       const [year, month, day] = date.split('-')
       return `${day}-${month}-${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     async getDataId(id) {
       console.log(id)

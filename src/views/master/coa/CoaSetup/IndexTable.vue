@@ -38,7 +38,16 @@
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
             <td class="text-center">
-              {{ item.name }}
+              {{ item.program_account }}
+            </td>
+            <td class="text-center">
+              {{ item.note }}
+            </td>
+            <td class="text-center">
+              {{ item.coa_id }}
+            </td>
+            <td class="text-center">
+              {{ item.account_id }}
             </td>
             <td class="text-center">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
@@ -115,7 +124,19 @@ export default {
       },
       fields: [
         {
-          name: 'Tipe Asset',
+          name: 'Program Akun',
+          class: 'text-uppercase text-center',
+        },
+        {
+          name: 'Catatan',
+          class: 'text-uppercase text-center',
+        },
+        {
+          name: 'Coa',
+          class: 'text-uppercase text-center',
+        },
+        {
+          name: 'Akun',
           class: 'text-uppercase text-center',
         },
       ],
@@ -140,7 +161,7 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ASSET_TYPE', {
+        .dispatch('GET_COA_SETUP', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
           name: this.filter.name,

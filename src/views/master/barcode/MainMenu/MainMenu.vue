@@ -33,8 +33,5 @@ export default {
       this.$emit('onLoading', value)
     },
   },
-  mounted() {
-    this.getList()
-  },
 }
 </script>

@@ -35,7 +35,6 @@
                   hint="dd-mm-yy format"
                   persistent-hint
                   v-bind="attrs"
-                  @blur="date = parseDate(dateFormatted)"
                   v-on="on"
                   color="error"
                 ></v-text-field>
@@ -145,12 +144,6 @@ export default {
 
       const [year, month, day] = date.split('-')
       return `${day}-${month}-${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     computedDateFormatted() {
       return this.formatDate(this.date)

@@ -8,11 +8,37 @@
         <v-row>
           <v-col cols="12">
             <v-text-field
-              label="Tipe Asset"
+              label="Program Akun"
               required
               color="error"
-              v-model="name"
-              :rules="[v => !!v || 'Nama Tipe Asset Harus Terisi']"
+              v-model="program_account"
+              :rules="[v => !!v || 'Program Akun Harus Diisi']"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Coa"
+              required
+              color="error"
+              v-model="coa_id"
+              item-text="coa_name"
+              item-value="id"
+              :items="coa_list"
+              :rules="[v => !!v || 'Data Coa Harus Terisi']"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Catatan" required color="error" v-model="note" />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Akun"
+              required
+              color="error"
+              item-text="account_name"
+              item-value="id"
+              :items="account_list"
+              :rules="[v => !!v || 'Data Account Harus Terisi']"
             />
           </v-col>
         </v-row>
@@ -33,9 +59,13 @@
 
 <script>
 export default {
+  props: ['account_list', 'coa_list'],
   data() {
     return {
-      name: '',
+      program_account: '',
+      coa_id: null,
+      note: '',
+      account_id: null,
       valid: true,
     }
   },
@@ -43,8 +73,11 @@ export default {
     createData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('ADD_ASSET_TYPE', {
-            name: this.name,
+          .dispatch('CREATE_COA_SETUP', {
+            coa_id: this.coa_id,
+            program_account: this.program_account,
+            note: this.note,
+            account_id: this.account_id,
           })
           .then(() => {
             this.$router.go()

@@ -27,7 +27,6 @@
                   hint="dd-mm-yy format"
                   persistent-hint
                   v-bind="attrs"
-                  @blur="date = parseDate(dateFormatted)"
                   v-on="on"
                   color="error"
                 ></v-text-field>
@@ -74,7 +73,7 @@
 
 <script>
 export default {
-  props: ['department_list', 'coa_list', 'asset_type_list'],
+  props: ['coa_list', 'account_list'],
   data() {
     return {
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
@@ -100,7 +99,7 @@ export default {
         this.$store
           .dispatch('CREATE_COA', {
             coa_id: this.coa_id,
-            balance_date: dateFormatted,
+            balance_date: this.dateFormatted,
             coa_saldo: this.coa_saldo,
             coa_debet: this.coa_debet,
             coa_credit: this.coa_credit,
@@ -120,12 +119,6 @@ export default {
 
       const [year, month, day] = date.split('-')
       return `${day}-${month}-${year}`
-    },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     computedDateFormatted() {
       return this.formatDate(this.date)

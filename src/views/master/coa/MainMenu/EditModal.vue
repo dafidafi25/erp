@@ -7,24 +7,16 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="Kode Asset" required color="error" v-model="asset_code" />
-          </v-col>
-          <v-col cols="12">
-            <v-text-field
-              label="Nama Asset*"
+            <v-autocomplete
+              label="COA*"
+              item-text="coa_name"
+              item-value="id"
+              required
               color="error"
-              v-model="asset_name"
-              :rules="[v => !!v || 'Nama Asset Tidak Boleh Kosong']"
-            ></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field label="Kuantitas" color="error" v-model="entered_qty"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field label="Note" color="error" v-model="nilai_asset"></v-text-field>
-          </v-col>
-          <v-col cols="12">
-            <v-text-field label="Nilai Asset" color="error" v-model="note"></v-text-field>
+              v-model="coa_id"
+              :rules="[v => !!v || 'COA Tidak Boleh Kosong']"
+              :items="coa_list"
+            ></v-autocomplete>
           </v-col>
           <v-col cols="12">
             <v-menu ref="menu1" v-model="menu1" :close-on-content-click="false">
@@ -44,40 +36,25 @@
             </v-menu>
           </v-col>
           <v-col cols="12">
-            <v-autocomplete
-              label="Tipe Asset*"
-              item-text="name"
-              item-value="id"
-              required
-              color="error"
-              v-model="asset_type_id"
-              :items="asset_type_list"
-              :rules="[v => !!v || 'Tipe Asset Tidak Boleh Kosong']"
-            ></v-autocomplete>
+            <v-text-field label="Saldo COA" required color="error" v-model="coa_saldo" />
           </v-col>
           <v-col cols="12">
-            <v-autocomplete
-              label="Department*"
-              item-text="department_name"
-              item-value="id"
-              required
-              color="error"
-              v-model="department_id"
-              :rules="[v => !!v || 'Department Tidak Boleh Kosong']"
-              :items="department_list"
-            ></v-autocomplete>
+            <v-text-field label="Debet COA" required color="error" v-model="coa_debet" />
           </v-col>
           <v-col cols="12">
-            <v-autocomplete
-              label="COA*"
-              item-text="coa_name"
-              item-value="id"
-              required
-              color="error"
-              v-model="coa_id"
-              :rules="[v => !!v || 'COA Tidak Boleh Kosong']"
-              :items="coa_list"
-            ></v-autocomplete>
+            <v-text-field label="Kredit COA" required color="error" v-model="coa_credit" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Periode" required color="error" v-model="period_name" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Saldo Akun" required color="error" v-model="a_saldo" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Saldo Debet" required color="error" v-model="a_debet" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Saldo Kredit" required color="error" v-model="a_credit" />
           </v-col>
         </v-row>
       </v-container>
@@ -98,7 +75,7 @@
 <script>
 import { EventBus } from './event-bus.js'
 export default {
-  props: ['department_list', 'coa_list', 'asset_type_list', 'data'],
+  props: ['coa_list', 'account_list', 'data'],
   data() {
     return {
       date: new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
@@ -106,16 +83,15 @@ export default {
         new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substr(0, 10),
       ),
       menu1: false,
-      asset_code: null,
-      asset_name: null,
-      entered_qty: null,
-      nilai_asset: null,
-      note: null,
-      buying_date: null,
-      asset_type_id: null,
-      department_id: null,
       coa_id: null,
-      active_flag: 1,
+      balance_date: null,
+      coa_saldo: null,
+      coa_debet: null,
+      coa_credit: null,
+      period_name: null,
+      a_saldo: null,
+      a_debet: null,
+      a_credit: null,
       valid: true,
       id: null,
     }
@@ -124,18 +100,17 @@ export default {
     updateData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('UPDATE_ASSET', {
+          .dispatch('UPDATE_COA', {
             id: this.id,
-            asset_code: this.asset_code,
-            asset_name: this.asset_name,
-            entered_qty: this.entered_qty,
-            nilai_asset: this.nilai_asset,
-            note: this.note,
-            buying_date: this.buying_date,
-            asset_type_id: this.asset_type_id,
-            department_id: this.department_id,
             coa_id: this.coa_id,
-            active_flag: this.active_flag,
+            balance_date: this.dateFormatted,
+            coa_saldo: this.coa_saldo,
+            coa_debet: this.coa_debet,
+            coa_credit: this.coa_credit,
+            period_name: this.period_name,
+            a_saldo: this.a_saldo,
+            a_debet: this.a_debet,
+            a_credit: this.a_credit,
           })
           .then(() => {
             this.$router.go()
@@ -149,30 +124,23 @@ export default {
       const [year, month, day] = date.split('-')
       return `${day}-${month}-${year}`
     },
-    parseDate(date) {
-      if (!date) return null
-
-      const [month, day, year] = date.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
     async getDataId(id) {
       console.log(id)
       await this.$store
-        .dispatch('GET_ASSET_ID', {
+        .dispatch('GET_COA_ID', {
           id: id,
         })
         .then(res => {
-          this.asset_code = res.data.response_data.asset_code
-          this.asset_name = res.data.response_data.asset_name
-          this.entered_qty = res.data.response_data.entered_qty
-          this.asset_type_id = res.data.response_data.asset_type_id
-          this.nilai_asset = res.data.response_data.nilai_asset
-          this.buying_date = res.data.response_data.buying_date
-          this.department_id = res.data.response_data.department_id
           this.coa_id = res.data.response_data.coa_id
-          this.active_flag = res.data.response_data.active_flag
-          this.note = res.data.response_data.note
-          this.dateFormatted = this.buying_date
+          this.balance_date = res.data.response_data.balance_date
+          this.coa_saldo = res.data.response_data.coa_saldo
+          this.coa_debet = res.data.response_data.coa_debet
+          this.coa_credit = res.data.response_data.coa_credit
+          this.period_name = res.data.response_data.period_name
+          this.a_saldo = res.data.response_data.a_saldo
+          this.a_debet = res.data.response_data.a_debet
+          this.a_credit = res.data.response_data.a_credit
+          this.dateFormatted = this.balance_date
         })
     },
   },
