@@ -105,7 +105,6 @@ export default {
       })
     },
     UPDATE_COA_SETUP: ({ commit }, { program_account, coa_id, note, account_id, id }) => {
-      console.log(active_flag)
       return new Promise((resolve, reject) => {
         axios
           .post('/coa-setup/update/' + id, {

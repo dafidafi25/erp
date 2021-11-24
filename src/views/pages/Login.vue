@@ -25,7 +25,7 @@
 
         <!-- login form -->
         <v-card-text v-if="!forgot_form">
-          <v-form>
+          <v-form lazy-validation ref="form" v-model="valid" @submit.prevent="login_auth">
             <v-text-field
               v-model="email"
               outlined
@@ -33,6 +33,7 @@
               hide-details
               class="mb-3"
               color="error"
+              :rules="[v => !!v || 'Username Tidak Bisa Kosong']"
             ></v-text-field>
 
             <v-text-field
@@ -45,6 +46,7 @@
               hide-details
               @click:append="isPasswordVisible = !isPasswordVisible"
               color="error"
+              :rules="[v => !!v || 'Username Tidak Bisa Kosong']"
             ></v-text-field>
 
             <div class="d-flex align-center justify-space-between flex-wrap">
@@ -57,7 +59,7 @@
             </div>
             <vue-recaptcha :sitekey="site_key" class="mt-1"></vue-recaptcha>
 
-            <v-btn block color="error" class="mt-6" @click="login_auth">
+            <v-btn block color="error" class="mt-6" type="submit">
               Login
             </v-btn>
           </v-form>
@@ -65,7 +67,7 @@
 
         <!-- forgot form -->
         <v-card-text v-if="forgot_form">
-          <v-form>
+          <v-form ref="form" v-model="valid">
             <v-text-field
               v-model="email"
               outlined
@@ -73,9 +75,16 @@
               hide-details
               class="mb-3"
               color="error"
+              :rules="[v => !!v || 'Username Tidak Bisa Kosong']"
             ></v-text-field>
             <!-- forgot link -->
-            <a class="mt-1" style="color:#FF4C51" color="error" @click="forgot_form = !forgot_form">
+            <a
+              class="mt-1"
+              style="color:#FF4C51"
+              color="error"
+              @click="forgot_form = !forgot_form"
+              :rules="[v => !!v || 'Password Tidak Bisa Kosong']"
+            >
               Back
             </a>
             <v-btn block color="error" class="mt-6" @click="login_auth">
@@ -93,6 +102,7 @@
 import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
 import VueRecaptcha from 'vue-recaptcha'
+import VueJwtDecode from 'vue-jwt-decode'
 
 export default {
   setup() {
@@ -101,6 +111,7 @@ export default {
     const password = ref('')
     const forgot_form = ref(false)
     const site_key = process.env.VUE_APP_SITE_KEY
+    const valid = ref(true)
 
     return {
       isPasswordVisible,
@@ -112,12 +123,44 @@ export default {
         mdiEyeOffOutline,
       },
       site_key,
+      valid,
+      VueJwtDecode,
     }
   },
   methods: {
     login_auth() {
-      console.log(this.email)
-      this.$router.replace('/home')
+      if (this.$refs.form.validate()) {
+        // console.log('Masok')
+        this.$store
+          .dispatch('LOGIN', {
+            usernameOrEmail: this.email,
+            password: this.password,
+            status: this.forgot_form,
+            captcha: null,
+          })
+          .then(res => {
+            if (res.data.message == 'Login Successfully') {
+              localStorage.setItem('token', res.data.response_data.token)
+              localStorage.setItem('refreshToken', res.data.refreshToken)
+              localStorage.setItem('department', VueJwtDecode.decode(localStorage.getItem('token')))
+              localStorage.setItem('password', this.password)
+              localStorage.setItem('department', VueJwtDecode.decode(localStorage.getItem('token')).sub)
+              axios.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+              this.getUserInfo()
+            }
+          })
+      }
+    },
+    getUserInfo() {
+      this.$store
+        .dispatch('GET_USER_PROFILE')
+        .then(res => {
+          localStorage.setItem('role', res.data.authorities[0].authority)
+          localStorage.setItem('username', res.data.name)
+          localStorage.setItem('name', res.data.name)
+          this.$router.push('/')
+        })
+        .catch(err => {})
     },
   },
   components: { VueRecaptcha },

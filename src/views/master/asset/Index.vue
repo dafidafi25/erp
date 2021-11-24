@@ -6,7 +6,7 @@
           <span>{{ tab.title }}</span>
         </v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab" touchless>
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>

@@ -16,7 +16,12 @@ export default {
     GET_DEPT_LIST: ({ commit }) => {
       return new Promise((resolve, reject) => {
         axios
-          .get('/department/list?role=' + localStorage.getItem('role'))
+          .get(
+            '/department/list?role=' +
+              localStorage.getItem('role') +
+              '&warehouse-id=' +
+              localStorage.getItem('warehouse'),
+          )
           .then(res => resolve(res))
           .catch(err => reject(err))
       })

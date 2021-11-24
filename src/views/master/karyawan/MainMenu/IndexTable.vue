@@ -12,37 +12,32 @@
       <div v-show="filter.show">
         <v-divider></v-divider>
         <div class="d-flex align-center pl-5 pr-5">
+          <v-text-field label="Barcode" style="max-width:250px" color="error" @input="debounceInput"></v-text-field>
           <v-text-field
-            label="Nama Akun"
+            label="Nama Item"
             style="max-width:250px"
             color="error"
             @input="debounceInput"
-            v-model="filter.nama_akun"
+            class="ml-5"
           ></v-text-field>
           <v-text-field
-            label="Kode Akun"
+            label="Kode Item"
             style="max-width:250px"
             class="ml-5"
             color="error"
             @input="debounceInput"
-            v-model="filter.kode_akun"
           ></v-text-field>
           <v-btn class="ml-5" color="error" @click="onResetFilter">Reset</v-btn>
         </div>
       </div>
     </v-expand-transition>
+
     <v-simple-table>
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-uppercase">
-              Kode Account
-            </th>
-            <th class="text-center text-uppercase">
-              Nama Account
-            </th>
-            <th class="text-center text-uppercase">
-              Tipe Account
+            <th v-for="(item, index) in fields" :key="index" :class="item.class">
+              {{ item.name }}
             </th>
             <th class="text-center text-uppercase">
               Action
@@ -51,14 +46,25 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.account_code }}</td>
             <td>
-              {{ item.account_name }}
+              {{ item.name }}
+            </td>
+            <td>
+              {{ item.description }}
             </td>
             <td class="text-center">
-              {{ item.account_type_id }}
+              {{ item.username }}
             </td>
             <td class="text-center">
+              {{ item.dept_name }}
+            </td>
+            <td class="text-center">
+              {{ item.warehouse_name }}
+            </td>
+            <td class="text-center">
+              {{ item.warehouse_address }}
+            </td>
+            <td class="text-center col-2">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
                 ><v-icon size="22">
                   {{ icons.mdiPencilOutline }}
@@ -129,9 +135,37 @@ export default {
       },
       filter: {
         show: false,
-        kode_akun: '',
-        nama_akun: '',
+        phone: null,
+        npwp: null,
+        city: null,
+        province: null,
       },
+      fields: [
+        {
+          name: 'Nama',
+          class: 'text-uppercase  ',
+        },
+        {
+          name: 'Deskripsi',
+          class: 'text-uppercase  ',
+        },
+        {
+          name: 'Username',
+          class: 'text-uppercase  text-center',
+        },
+        {
+          name: 'Department',
+          class: 'text-uppercase text-center',
+        },
+        {
+          name: 'Gudang',
+          class: 'text-uppercase text-center',
+        },
+        {
+          name: 'Lokasi Gudang',
+          class: 'text-uppercase text-center',
+        },
+      ],
     }
   },
   methods: {
@@ -140,11 +174,11 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ACCOUNT', { id: this.items[index].id })
+        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
-            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
             this.updateData()
+            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
           }
           this.updateData()
         })
@@ -153,11 +187,9 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ACCOUNT', {
+        .dispatch('GET_KARYAWAN', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          account_code: this.filter.kode_akun,
-          account_name: this.filter.account_name,
         })
         .then(res => {
           this.$emit('onLoading', false)

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-form lazy-validation ref="form" v-model="valid" aria-autocomplete="">
     <v-card-title>
       <span class="text-h5">Tambah Data</span>
     </v-card-title>
@@ -7,10 +7,49 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 1*" required color="error" v-model="nama_akun_1" />
+            <v-text-field label="Username" required color="error" v-model="username" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 2*" required color="error"></v-text-field>
+            <v-text-field label="name" required color="error" v-model="name" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="email" required color="error" v-model="email" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Password" required color="error" type="password" v-model="password" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="Masukan Ulang Password" required color="error" v-model="re_password" />
+          </v-col>
+          <v-radio-group v-model="gender" row>
+            <v-radio label="Laki-Laki" value="1" color="error"></v-radio>
+            <v-radio label="Perempuan" value="2" color="error"></v-radio>
+          </v-radio-group>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Role"
+              required
+              color="error"
+              :items="role_list"
+              item-text="name"
+              item-value="roleId"
+              v-model="role"
+            />
+          </v-col>
+          <v-radio-group v-model="is_karyawan" row>
+            <v-radio label="Karyawan" value="1" color="error"></v-radio>
+            <v-radio label="Bukan Karyawan" value="2" color="error"></v-radio>
+          </v-radio-group>
+          <v-col cols="12" v-if="karyawanValdiation">
+            <v-autocomplete
+              label="Department"
+              required
+              color="error"
+              :items="department_list"
+              item-text="department_name"
+              item-value="id"
+              v-model="dept_id"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -25,34 +64,55 @@
         Simpan
       </v-btn>
     </v-card-actions>
-  </div>
+  </v-form>
 </template>
 
 <script>
 export default {
+  props: ['department_list', 'role_list'],
   data() {
     return {
-      nama_akun_1: null,
-      nama_akun_2: null,
+      username: null,
+      name: null,
+      email: null,
+      password: null,
+      re_password: null,
+      gender: null,
+      is_karyawan: null,
+      role: null,
+      description: null,
+      dept_id: null,
+      valid: null,
     }
   },
   methods: {
     createData() {
-      this.$store
-        .dispatch('ADD_ACCOUNT', {
-          account_name: this.nama_akun_1,
-          account_name2: this.nama_akun_2,
-          parent_flag: null,
-          parent_id: null,
-          active_flag: 1,
-          neraca_flag: 1,
-          status_flag: 1,
-          primary_flag: 1,
-        })
-        .then(() => {
-          this.$router.go()
-        })
-        .catch(err => console.log(err))
+      if (this.$refs.form.validate()) {
+        this.$store
+          .dispatch('REGISTER_USER', {
+            username: this.username,
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            gender: this.gender,
+            is_karyawan: this.is_karyawan,
+            role: this.role,
+            description: this.description,
+            dept_id: this.dept_id,
+          })
+          .then(() => {
+            this.$router.go()
+          })
+          .catch(err => console.log(err))
+      }
+    },
+  },
+  computed: {
+    karyawanValdiation() {
+      if (this.is_karyawan == 1) {
+        this.dept_id = null
+        return true
+      }
     },
   },
 }

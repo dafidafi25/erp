@@ -21,13 +21,18 @@
     <!-- add Dialog -->
     <v-dialog max-width="600px" v-model="TriggerAddModal">
       <v-card>
-        <add-modal @onAddClicked="addItem" />
+        <add-modal @onAddClicked="addItem" :department_list="department_list" :role_list="role_list" />
       </v-card>
     </v-dialog>
     <!-- edit Dialog -->
     <v-dialog max-width="600px" v-model="TriggerUpdateModal">
       <v-card>
-        <edit-modal @onUpdateClicked="updateItem" :data="data" />
+        <edit-modal
+          @onUpdateClicked="updateItem"
+          :data="data"
+          :department_list="department_list"
+          :role_list="role_list"
+        />
       </v-card>
     </v-dialog>
   </div>
@@ -46,6 +51,8 @@ export default {
       TriggerAddModal: null,
       TriggerUpdateModal: null,
       data: null,
+      department_list: null,
+      role_list: null,
     }
   },
   components: {
@@ -62,12 +69,27 @@ export default {
     },
     updateItem(value) {
       this.TriggerUpdateModal = !this.TriggerUpdateModal
-      this.data = value
-      EventBus.$emit('onUpdate', value)
+      if (value != undefined) {
+        this.data = value
+        EventBus.$emit('onUpdate', value)
+      }
     },
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal
     },
+    async getList() {
+      this.$store
+        .dispatch('GET_ROLES_LIST')
+        .then(res => (this.role_list = res.data.response_data))
+        .catch(err => console.log(err))
+      await this.$store
+        .dispatch('GET_DEPT_LIST')
+        .then(res => (this.department_list = res.data.response_data))
+        .catch(err => console.log(err))
+    },
+  },
+  mounted() {
+    this.getList()
   },
 }
 </script>

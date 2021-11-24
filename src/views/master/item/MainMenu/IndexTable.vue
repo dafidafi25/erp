@@ -13,36 +13,35 @@
         <v-divider></v-divider>
         <div class="d-flex align-center pl-5 pr-5">
           <v-text-field
-            label="Nama Akun"
+            label="Nama Item"
             style="max-width:250px"
             color="error"
             @input="debounceInput"
-            v-model="filter.nama_akun"
+            class="ml-5"
+            v-model="filter.item_name"
           ></v-text-field>
-          <v-text-field
-            label="Kode Akun"
+          <v-autocomplete
+            label="Warehouse"
             style="max-width:250px"
             class="ml-5"
             color="error"
             @input="debounceInput"
-            v-model="filter.kode_akun"
-          ></v-text-field>
+            item-text="name"
+            item-value="id"
+            v-model="filter.warehouse"
+            :items="warehouse_list"
+          ></v-autocomplete>
           <v-btn class="ml-5" color="error" @click="onResetFilter">Reset</v-btn>
         </div>
       </div>
     </v-expand-transition>
-    <v-simple-table>
+
+    <v-simple-table fixed-header dense>
       <template v-slot:default>
         <thead>
           <tr>
-            <th class="text-uppercase">
-              Kode Account
-            </th>
-            <th class="text-center text-uppercase">
-              Nama Account
-            </th>
-            <th class="text-center text-uppercase">
-              Tipe Account
+            <th v-for="(item, index) in fields" :key="index" :class="item.class">
+              {{ item.name }}
             </th>
             <th class="text-center text-uppercase">
               Action
@@ -51,14 +50,43 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>{{ item.account_code }}</td>
             <td>
-              {{ item.account_name }}
+              {{ item.item_name }}
+            </td>
+            <td>
+              {{ item.item_description }}
             </td>
             <td class="text-center">
-              {{ item.account_type_id }}
+              {{ item.part_number }}
             </td>
             <td class="text-center">
+              {{ item.uom_code }}
+            </td>
+            <td class="text-center">
+              {{ item.grade_name }}
+            </td>
+            <td class="text-center">
+              {{ item.kategori_name }}
+            </td>
+            <td class="text-center">
+              {{ item.tipe_name }}
+            </td>
+            <td class="text-center">
+              {{ item.merek_name }}
+            </td>
+            <td class="text-center">
+              {{ item.panjang }}
+            </td>
+            <td class="text-center">
+              {{ item.lebar }}
+            </td>
+            <td class="text-center">
+              {{ item.tinggi }}
+            </td>
+            <td class="text-center">
+              {{ item.warehouse_name }}
+            </td>
+            <td class="text-center col-1">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
                 ><v-icon size="22">
                   {{ icons.mdiPencilOutline }}
@@ -111,6 +139,7 @@ import { mdiPencilOutline, mdiTrashCanOutline, mdiChevronUp, mdiChevronDown } fr
 import { EventBus } from './event-bus.js'
 var timeOut
 export default {
+  props: ['warehouse_list'],
   data() {
     return {
       items: [],
@@ -129,9 +158,59 @@ export default {
       },
       filter: {
         show: false,
-        kode_akun: '',
-        nama_akun: '',
+        item_name: null,
+        warehouse: null,
       },
+      fields: [
+        {
+          name: 'Nama Item',
+          class: 'text-uppercase col-2',
+        },
+        {
+          name: 'Dekripsi Item',
+          class: 'text-uppercase col-2',
+        },
+        {
+          name: 'Nomor Part',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Satuan',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Grade',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Kategori',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Tipe',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Merek',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Panjang',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Lebar',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Tinggi',
+          class: 'text-center text-uppercase col-1',
+        },
+        {
+          name: 'Gudang',
+          class: 'text-center text-uppercase col-1',
+        },
+      ],
     }
   },
   methods: {
@@ -140,11 +219,11 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ACCOUNT', { id: this.items[index].id })
+        .dispatch('DELETE_ITEM', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
-            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
             this.updateData()
+            this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
           }
           this.updateData()
         })
@@ -153,11 +232,11 @@ export default {
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_ACCOUNT', {
+        .dispatch('GET_ITEM', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          account_code: this.filter.kode_akun,
-          account_name: this.filter.account_name,
+          item_name: this.filter.item_name,
+          warehouse_id: this.filter.warehouse_id,
         })
         .then(res => {
           this.$emit('onLoading', false)
@@ -175,8 +254,8 @@ export default {
       }, 500)
     },
     onResetFilter() {
-      this.filter.kode_akun = ''
-      this.filter.nama_akun = ''
+      this.filter.item_name = null
+      this.filter.warehouse = null
       this.debounceInput()
     },
   },

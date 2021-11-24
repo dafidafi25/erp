@@ -1,16 +1,54 @@
 <template>
-  <div>
+  <v-form lazy-validation ref="form" v-model="valid" aria-autocomplete="">
     <v-card-title>
-      <span class="text-h5">Update Data</span>
+      <span class="text-h5">Tambah Data</span>
     </v-card-title>
     <v-card-text>
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 1*" required color="error" v-model="nama_akun_1" />
+            <v-text-field label="Username" required color="error" v-model="username" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Nama Akun 2*" required color="error" v-model="nama_akun_2"></v-text-field>
+            <v-text-field label="name" required color="error" v-model="name" />
+          </v-col>
+          <v-col cols="12">
+            <v-text-field label="email" required color="error" v-model="email" />
+          </v-col>
+          <v-col cols="12">
+            <v-radio-group v-model="gender">
+              <v-radio
+                v-for="n in 2"
+                :key="n"
+                :label="n == 1 ? 'Laki-Laki' : 'Perempuan'"
+                :value="n"
+                color="error"
+                row
+              ></v-radio>
+            </v-radio-group>
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Role"
+              required
+              color="error"
+              :items="role_list"
+              item-text="name"
+              item-value="roleId"
+              v-model="role"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-radio-group v-model="is_karyawan">
+              <v-radio
+                v-for="n in 2"
+                :key="n"
+                :label="n == 1 ? 'Karyawan' : 'Bukan Karyawan'"
+                :value="n"
+                color="error"
+                row
+              ></v-radio>
+            </v-radio-group>
           </v-col>
         </v-row>
       </v-container>
@@ -25,59 +63,75 @@
         Simpan
       </v-btn>
     </v-card-actions>
-  </div>
+  </v-form>
 </template>
 
 <script>
 import { EventBus } from './event-bus.js'
 export default {
-  props: ['data'],
+  props: ['role_list', 'data'],
   data() {
     return {
-      nama_akun_1: null,
-      nama_akun_2: null,
-      id: this.data,
+      username: null,
+      name: null,
+      email: null,
+      password: null,
+      re_password: null,
+      gender: 1,
+      is_karyawan: null,
+      role: null,
+      description: null,
+      valid: null,
+      id: null,
+      radioGroup: 1,
     }
   },
-
   methods: {
     updateData() {
-      this.$store
-        .dispatch('ADD_ACCOUNT', {
-          account_name: this.nama_akun_1,
-          account_name2: this.nama_akun_2,
-          parent_flag: null,
-          parent_id: null,
-          active_flag: 1,
-          neraca_flag: 1,
-          status_flag: 1,
-          primary_flag: 1,
-        })
-        .then(() => {
-          this.$router.go()
-        })
-        .catch(err => console.log(err))
+      if (this.$refs.form.validate()) {
+        this.$store
+          .dispatch('UPDATE_USER', {
+            id: this.id,
+            username: this.username,
+            name: this.name,
+            email: this.email,
+            password: this.password,
+            gender: this.gender,
+            is_karyawan: this.is_karyawan,
+            role: this.role,
+          })
+          .then(() => {
+            this.$router.go()
+          })
+          .catch(err => console.log(err))
+      }
     },
-    getDataId(id) {
-      this.$store
-        .dispatch('GET_ACCOUNT_ID', {
+    async getDataId(id) {
+      await this.$store
+        .dispatch('GET_USER_ID', {
           id: id,
         })
         .then(res => {
-          this.nama_akun_1 = res.data.response_data.account_name
-          this.nama_akun_2 = res.data.response_data.account_name2
+          this.username = res.data.response_data.username
+          this.name = res.data.response_data.name
+          this.email = res.data.response_data.email
+          this.password = 123
+          this.gender = res.data.response_data.gender
+          this.is_karyawan = res.data.response_data.is_karyawan
+          this.role = res.data.response_data.roles[0].roleId
+          this.description = res.data.response_data.description
         })
     },
-  },
-  mounted() {
-    this.getDataId(this.data)
   },
   created() {
     EventBus.$on('onUpdate', value => {
       this.id = value
-      console.log(this.id)
       this.getDataId(value)
     })
+  },
+  mounted() {
+    this.id = this.data
+    this.getDataId(this.id)
   },
 }
 </script>

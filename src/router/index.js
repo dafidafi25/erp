@@ -1,5 +1,60 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import axios from 'axios'
+
+axios.interceptors.response.use(
+  response => {
+    return response
+  },
+  err => {
+    const {
+      config,
+      response: { status, data },
+    } = err
+    const originalRequest = config
+    // console.log(localStorage.getItem("token"));
+    // console.log(config);
+    if (data.error === 'Unauthorized' && localStorage.getItem('refresh-token') == undefined) {
+      alert('Token Expired')
+      localStorage.clear()
+      router.push({ name: 'pages-login' })
+      return Promise.reject(false)
+    } else if (localStorage.getItem('refresh-token') != 'null') {
+      if (!refreshing) {
+        refreshing = true
+        store
+          .dispatch('REFRESH_TOKEN', {
+            token: localStorage.getItem('refresh-token'),
+            password: localStorage.getItem('password'),
+          })
+          .then(res => {
+            if ((res.status = 200)) {
+              localStorage.setItem('token', res.data.response_data.token)
+              localStorage.setItem('refresh-token', res.data.response_data.refreshToken)
+              refreshing = false
+              alert('token refreshed reload the page')
+              router.go()
+            }
+          })
+          .catch(err => console.error(err))
+      }
+    }
+
+    if (originalRequest.url.includes('users/login')) {
+      return Promise.reject(err)
+    }
+  },
+)
+
+axios.interceptors.request.use(
+  function(config) {
+    return config
+  },
+  function(error) {
+    // Do something with request error
+    return Promise.reject(error)
+  },
+)
 
 Vue.use(VueRouter)
 
@@ -114,6 +169,11 @@ const routes = [
     name: 'master-user',
     component: () => import('../views/master/user/Index.vue'),
   },
+  {
+    path: '/master/warehouse',
+    name: 'master-warehouse',
+    component: () => import('../views/master/user/Index.vue'),
+  },
   // master
   {
     path: '/login',
@@ -149,6 +209,19 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes,
+})
+
+router.beforeEach((to, from, next) => {
+  axios.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
+  if (localStorage.getItem('username') == null) {
+    if (to.path !== '/login') {
+      next('/login')
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

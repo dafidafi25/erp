@@ -6,16 +6,26 @@
           <span>{{ tab.title }}</span>
         </v-tab>
       </v-tabs>
-      <v-tabs-items v-model="tab">
+      <v-tabs-items v-model="tab" touchless>
         <v-tab-item>
           <main-menu @onLoading="loadingDialog" />
         </v-tab-item>
-
         <v-tab-item>
-          <main-menu @onLoading="loadingDialog" />
+          <grade @onLoading="loadingDialog" />
+        </v-tab-item>
+        <v-tab-item>
+          <merek @onLoading="loadingDialog" />
+        </v-tab-item>
+        <v-tab-item>
+          <tipe @onLoading="loadingDialog" />
+        </v-tab-item>
+        <v-tab-item>
+          <kategori @onLoading="loadingDialog" />
+        </v-tab-item>
+        <v-tab-item>
+          <price @onLoading="loadingDialog" />
         </v-tab-item>
       </v-tabs-items>
-
       <!-- loading Dialog -->
     </v-card>
 
@@ -32,6 +42,12 @@
 
 <script>
 import MainMenu from './MainMenu/MainMenu.vue'
+import Kategori from './Kategori/MainMenu.vue'
+import Grade from './Grade/MainMenu.vue'
+import Tipe from './Type/MainMenu.vue'
+import Price from './Price/MainMenu.vue'
+import Merek from './Merek/MainMenu.vue'
+
 export default {
   data() {
     return {
@@ -42,16 +58,34 @@ export default {
       tab: null,
       tabs: [
         {
-          title: 'Aktif',
+          title: 'Item',
+        },
+
+        {
+          title: 'Grade',
         },
         {
-          title: 'Non-Aktif',
+          title: 'Merek',
+        },
+        {
+          title: 'Tipe',
+        },
+        {
+          title: 'Kategori',
+        },
+        {
+          title: 'Price',
         },
       ],
     }
   },
   components: {
     MainMenu,
+    Kategori,
+    Grade,
+    Tipe,
+    Price,
+    Merek,
   },
   methods: {
     loadingDialog(value) {

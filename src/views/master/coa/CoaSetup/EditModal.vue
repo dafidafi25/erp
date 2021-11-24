@@ -1,7 +1,7 @@
 <template>
-  <v-form lazy-validation ref="form" v-model="valid" aria-autocomplete="">
+  <v-form lazy-validation ref="form" v-model="valid">
     <v-card-title>
-      <span class="text-h5">Tambah Data</span>
+      <span class="text-h5">Edit Data</span>
     </v-card-title>
     <v-card-text>
       <v-container>
@@ -75,9 +75,12 @@ export default {
     updateData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('UPDATE_ASSET_TYPE', {
+          .dispatch('UPDATE_COA_SETUP', {
             id: this.id,
-            name: this.name,
+            program_account: this.program_account,
+            coa_id: this.coa_id,
+            note: this.note,
+            account_id: this.account_id,
           })
           .then(() => {
             this.$router.go()
@@ -88,11 +91,14 @@ export default {
     async getDataId(id) {
       console.log(id)
       await this.$store
-        .dispatch('GET_ASSET_TYPE_ID', {
+        .dispatch('GET_COA_SETUP_ID', {
           id: id,
         })
         .then(res => {
-          this.name = res.data.response_data.name
+          this.program_account = res.data.response_data.program_account
+          this.coa_id = res.data.response_data.coa_id
+          this.note = res.data.response_data.note
+          this.account_id = res.data.response_data.account_id
         })
     },
   },

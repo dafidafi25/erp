@@ -21,6 +21,18 @@
 
     <!-- Navigation Items -->
     <v-list expand shaped class="vertical-nav-menu-items pr-5">
+      <v-autocomplete
+        v-if="warehouseSelectValidation"
+        class="ml-6"
+        label="Gudang"
+        v-model="warehouse_id"
+        :items="warehouse_list"
+        item-color="error"
+        item-text="name"
+        item-value="id"
+        @input="localStorage.setItem('warehouse', warehouse_id)"
+        color="error"
+      ></v-autocomplete>
       <nav-menu-link title="Home" :to="{ name: 'home' }" :icon="icons.mdiHomeOutline"></nav-menu-link>
       <nav-menu-group title="Master" :icon="icons.mdiCity">
         <nav-menu-link title="Satuan" :to="{ name: 'master-satuan' }"></nav-menu-link>
@@ -36,6 +48,7 @@
         <nav-menu-link title="Item Minus" :to="{ name: 'master-item-minus' }"></nav-menu-link>
         <nav-menu-link title="Saldo Awal" :to="{ name: 'master-saldo-awal' }"></nav-menu-link>
         <nav-menu-link title="Person" :to="{ name: 'master-person' }"></nav-menu-link>
+        <nav-menu-link title="Warehouse" :to="{ name: 'master-warehouse' }"></nav-menu-link>
       </nav-menu-group>
       <nav-menu-group title="Inventory" :icon="icons.mdiHockeyPuck">
         <nav-menu-link title="Stok Item" class="ml-5"></nav-menu-link>
@@ -101,6 +114,7 @@ import {
 } from '@mdi/js'
 import NavMenuGroup from './components/NavMenuGroup.vue'
 import NavMenuLink from './components/NavMenuLink.vue'
+import { ref } from '@vue/composition-api'
 
 export default {
   components: {
@@ -114,6 +128,9 @@ export default {
     },
   },
   setup() {
+    const warehouse_id = ref(1)
+    let warehouse_list = ref([])
+
     return {
       icons: {
         mdiEmail,
@@ -142,7 +159,30 @@ export default {
         mdiAccountCogOutline,
         mdiShoppingOutline,
       },
+      warehouse_id,
+      warehouse_list,
     }
+  },
+
+  mounted() {
+    this.$store
+      .dispatch('GET_ALL_WAREHOUSE_LIST')
+      .then(res => {
+        this.warehouse_list = res.data.data
+      })
+      .catch(err => console.log(err))
+    if (localStorage.getItem('role') == 'ROLE_SUPERADMIN') {
+      localStorage.setItem('warehouse', 1)
+    }
+  },
+  computed: {
+    warehouseSelectValidation() {
+      if (localStorage.getItem('role') == 'ROLE_SUPERADMIN') {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 }
 </script>

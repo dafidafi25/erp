@@ -1,20 +1,7 @@
 <template>
   <div>
     <v-card class="rounded-0" style="margin-top:62px">
-      <v-tabs v-model="tab" show-arrows color="error">
-        <v-tab v-for="(tab, index) in tabs" :key="index">
-          <span>{{ tab.title }}</span>
-        </v-tab>
-      </v-tabs>
-      <v-tabs-items v-model="tab">
-        <v-tab-item>
-          <main-menu @onLoading="loadingDialog" />
-        </v-tab-item>
-
-        <v-tab-item>
-          <main-menu @onLoading="loadingDialog" />
-        </v-tab-item>
-      </v-tabs-items>
+      <main-menu @onLoading="loadingDialog" />
 
       <!-- loading Dialog -->
     </v-card>
@@ -42,10 +29,7 @@ export default {
       tab: null,
       tabs: [
         {
-          title: 'Aktif',
-        },
-        {
-          title: 'Non-Aktif',
+          title: 'User',
         },
       ],
     }

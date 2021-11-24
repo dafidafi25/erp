@@ -13,7 +13,7 @@
     <!-- tabs item -->
     <v-tabs-items v-model="tab">
       <v-tab-item>
-        <account-settings-account :account-data="accountSettingData.account"></account-settings-account>
+        <account-settings-account></account-settings-account>
       </v-tab-item>
 
       <v-tab-item>
@@ -44,37 +44,13 @@ export default {
       { title: 'Account', icon: mdiAccountOutline },
       { title: 'Security', icon: mdiLockOpenOutline },
     ]
-
-    // account settings data
-    const accountSettingData = {
-      account: {
-        avatarImg: require('@/assets/images/avatars/1.png'),
-        username: 'johnDoe',
-        name: 'john Doe',
-        email: 'johnDoe@example.com',
-        role: 'Admin',
-        status: 'Active',
-        company: 'Google.inc',
-      },
-      information: {
-        bio:
-          'The name’s John Deo. I am a tireless seeker of knowledge, occasional purveyor of wisdom and also, coincidentally, a graphic designer. Algolia helps businesses across industries quickly create relevant 😎, scaLabel 😀, and lightning 😍 fast search and discovery experiences.',
-        birthday: 'February 22, 1995',
-        phone: '954-006-0844',
-        website: 'https://themeselection.com/',
-        country: 'USA',
-        languages: ['English', 'Spanish'],
-        gender: 'male',
-      },
-    }
-
     return {
       tab,
       tabs,
-      accountSettingData,
       icons: {
         mdiAccountOutline,
         mdiLockOpenOutline,
+        mdiInformationOutline,
       },
     }
   },
