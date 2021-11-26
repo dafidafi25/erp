@@ -7,16 +7,19 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field
-              label="Satuan*"
-              required
-              color="error"
-              v-model="uom_code"
-              :rules="[v => !!v || 'Satuan Harus Diisi']"
-            />
+            <v-text-field label="Sub Merek" required color="error" v-model="name" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Deskripsi" required color="error" v-model="description" />
+            <v-autocomplete
+              label="Merek Item"
+              required
+              color="error"
+              v-model="merek_id"
+              :items="merek_item_list"
+              item-text="name"
+              item-value="id"
+              item-color="error"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -36,40 +39,27 @@
 
 <script>
 export default {
+  props: ['merek_item_list'],
   data() {
     return {
-      uom_code: null,
-      description: null,
-      valid: true,
+      merek_id: null,
+      name: null,
+      valid: null,
     }
   },
   methods: {
     createData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('REGISTER_SATUAN', {
-            uom_code: this.uom_code,
-            description: this.description,
+          .dispatch('CREATE_SUB_MEREK', {
+            merek_id: this.merek_id,
+            name: this.name,
           })
           .then(() => {
             this.$router.go()
           })
           .catch(err => console.log(err))
       }
-    },
-    formatDate(date) {
-      if (!date) return null
-
-      const [year, month, day] = date.split('-')
-      return `${day}-${month}-${year}`
-    },
-    computedDateFormatted() {
-      return this.formatDate(this.date)
-    },
-  },
-  watch: {
-    date(val) {
-      this.dateFormatted = this.formatDate(this.date)
     },
   },
 }

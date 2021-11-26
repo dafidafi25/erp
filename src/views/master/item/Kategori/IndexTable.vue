@@ -52,7 +52,9 @@
             <td class="text-center">
               {{ item.merek_id }}
             </td>
-
+            <td class="text-center">
+              {{ item.sub_merek_id }}
+            </td>
             <td class="text-center col-1">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
                 ><v-icon size="22">
@@ -138,6 +140,10 @@ export default {
           name: 'Merek',
           class: 'text-uppercase col-2 text-center',
         },
+        {
+          name: 'Sub Merek',
+          class: 'text-uppercase col-2 text-center',
+        },
       ],
     }
   },
@@ -147,7 +153,7 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
+        .dispatch('DELETE_ITEM_KATEGORI', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
             this.updateData()

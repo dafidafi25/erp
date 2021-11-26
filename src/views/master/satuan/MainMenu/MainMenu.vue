@@ -62,8 +62,10 @@ export default {
     },
     updateItem(value) {
       this.TriggerUpdateModal = !this.TriggerUpdateModal
-      this.data = value
-      EventBus.$emit('onUpdate', value)
+      if (value != undefined) {
+        this.data = value
+        EventBus.$emit('onUpdate', value)
+      }
     },
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal

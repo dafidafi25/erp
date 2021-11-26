@@ -50,16 +50,22 @@
             ></v-text-field>
 
             <div class="d-flex align-center justify-space-between flex-wrap">
-              <v-checkbox label="Remember Me" hide-details class="me-3 mt-1" color="error"> </v-checkbox>
+              <v-checkbox label="Remember Me" hide-details class="me-3 mt-1" color="error" v-model="rememberMe">
+              </v-checkbox>
 
               <!-- forgot link -->
               <a class="mt-1" style="color:#FF4C51" color="error" @click="forgot_form = !forgot_form">
                 Forgot Password
               </a>
             </div>
-            <vue-recaptcha :sitekey="site_key" class="mt-1"></vue-recaptcha>
+            <vue-recaptcha
+              :sitekey="site_key"
+              @verify="onCaptchaVerified"
+              @expired="onCaptchaExpired"
+              class="mt-1"
+            ></vue-recaptcha>
 
-            <v-btn block color="error" class="mt-6" type="submit">
+            <v-btn block color="error" class="mt-6" type="submit" :disabled="verified">
               Login
             </v-btn>
           </v-form>
@@ -67,7 +73,7 @@
 
         <!-- forgot form -->
         <v-card-text v-if="forgot_form">
-          <v-form ref="form" v-model="valid">
+          <v-form ref="form" v-model="valid" @submit.prevent="forgot_password">
             <v-text-field
               v-model="email"
               outlined
@@ -87,13 +93,21 @@
             >
               Back
             </a>
-            <v-btn block color="error" class="mt-6" @click="login_auth">
+            <v-btn block color="error" class="mt-6" type="submit">
               Forgot Password
             </v-btn>
           </v-form>
         </v-card-text>
       </v-card>
     </div>
+    <v-dialog width="300" v-model="loading" persistent>
+      <v-card color="error">
+        <v-card-text>
+          Loading
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -112,6 +126,11 @@ export default {
     const forgot_form = ref(false)
     const site_key = process.env.VUE_APP_SITE_KEY
     const valid = ref(true)
+    const loading = ref(false)
+    const timeOut = ref()
+    const verified = ref(true)
+    const captcha = ref(true)
+    const rememberMe = ref(false)
 
     return {
       isPasswordVisible,
@@ -125,6 +144,11 @@ export default {
       site_key,
       valid,
       VueJwtDecode,
+      loading,
+      timeOut,
+      verified,
+      captcha,
+      rememberMe,
     }
   },
   methods: {
@@ -135,8 +159,8 @@ export default {
           .dispatch('LOGIN', {
             usernameOrEmail: this.email,
             password: this.password,
-            status: this.forgot_form,
-            captcha: null,
+            status: this.rememberMe,
+            captcha: this.captcha,
           })
           .then(res => {
             if (res.data.message == 'Login Successfully') {
@@ -147,6 +171,7 @@ export default {
               localStorage.setItem('department', VueJwtDecode.decode(localStorage.getItem('token')).sub)
               axios.defaults.headers['Authorization'] = 'Bearer ' + localStorage.getItem('token')
               this.getUserInfo()
+            } else if (res.data.message == 'Login Gagal') {
             }
           })
       }
@@ -161,6 +186,35 @@ export default {
           this.$router.push('/')
         })
         .catch(err => {})
+    },
+    forgot_password() {
+      console.log(this.email)
+      this.loading = true
+      clearTimeout(this.timeOut)
+      this.timeOut = setTimeout(() => {
+        this.loading = false
+      }, 10000)
+
+      this.$store
+        .dispatch('FORGOT_PASSWORD_EMAIL', {
+          email: this.email,
+        })
+        .then(res => {
+          if (res.data.message == 'Error Get Data') {
+            alert('Email Tidak Terdaftar')
+            this.loading = false
+          } else if (res.data.message == 'Reset password link has been sent, please check your email.') {
+            alert('Silahkan Check Email')
+            this.loading = false
+          }
+        })
+    },
+    onCaptchaVerified(data) {
+      this.captcha = data
+      this.verified = false
+    },
+    onCaptchaExpired() {
+      this.verified = true
     },
   },
   components: { VueRecaptcha },

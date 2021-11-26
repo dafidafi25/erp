@@ -7,29 +7,31 @@
       </v-btn>
       <v-btn class="mr-5" color="error" @click="$emit('onAddClicked')">Add Data</v-btn>
     </div>
+
     <v-expand-transition>
       <div v-show="filter.show">
         <v-divider></v-divider>
         <div class="d-flex align-center pl-5 pr-5">
+          <v-text-field label="Barcode" style="max-width:250px" color="error" @input="debounceInput"></v-text-field>
           <v-text-field
-            label="Nama Satuan"
+            label="Nama Item"
             style="max-width:250px"
             color="error"
             @input="debounceInput"
-            v-model="filter.uom_code"
+            class="ml-5"
           ></v-text-field>
           <v-text-field
-            label="Deskripsi"
+            label="Kode Item"
             style="max-width:250px"
             class="ml-5"
             color="error"
             @input="debounceInput"
-            v-model="filter.description"
           ></v-text-field>
           <v-btn class="ml-5" color="error" @click="onResetFilter">Reset</v-btn>
         </div>
       </div>
     </v-expand-transition>
+
     <v-simple-table>
       <template v-slot:default>
         <thead>
@@ -44,13 +46,13 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>
-              {{ item.uom_code }}
+            <td class="text-center">
+              {{ item.submerek_name }}
             </td>
             <td class="text-center">
-              {{ item.description }}
+              {{ item.merek_name }}
             </td>
-            <td class="text-center">
+            <td class="text-center col-1">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
                 ><v-icon size="22">
                   {{ icons.mdiPencilOutline }}
@@ -112,9 +114,6 @@ export default {
         mdiChevronUp,
         mdiChevronDown,
       },
-      filter: {
-        show: false,
-      },
       pagination: {
         page: 1,
         perPage: 10,
@@ -124,18 +123,19 @@ export default {
       },
       filter: {
         show: false,
-        name: null,
-        keterangan: null,
-        hari: null,
+        phone: null,
+        npwp: null,
+        city: null,
+        province: null,
       },
       fields: [
         {
-          name: 'Kode Satuan',
-          class: 'text-uppercase',
+          name: 'Sub Merek',
+          class: 'text-uppercase col-2 text-center',
         },
         {
-          name: 'Deskripsi',
-          class: 'text-center text-uppercase',
+          name: ' Merek',
+          class: 'text-uppercase col-2 text-center',
         },
       ],
     }
@@ -146,26 +146,22 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
+        .dispatch('DELETE_SUB_MEREK', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
             this.updateData()
             this.pagination.page = this.pagination.page == 1 ? 1 : this.pagination.page - 1
-          } else {
-            this.updateData()
           }
+          this.updateData()
         })
         .catch(err => console.log(err))
     },
     updateData() {
       this.$emit('onLoading', true)
       this.$store
-        .dispatch('GET_JANGKA_WAKTU', {
+        .dispatch('GET_SUB_MEREK_PAGE', {
           page: this.pagination.page,
           per_page: this.pagination.perPage,
-          name: filter.name,
-          keterangan: filter.keterangan,
-          hari: filter.hari,
         })
         .then(res => {
           this.$emit('onLoading', false)
@@ -183,9 +179,8 @@ export default {
       }, 500)
     },
     onResetFilter() {
-      this.filter.name = null
-      this.filter.keterangan = null
-      this.filter.hari
+      this.filter.kode_akun = ''
+      this.filter.nama_akun = ''
       this.debounceInput()
     },
   },

@@ -74,29 +74,9 @@ const routes = [
     component: () => import('../views/home/Home.vue'),
   },
   {
-    path: '/typography',
-    name: 'typography',
-    component: () => import('../views/typography/Typography.vue'),
-  },
-  {
-    path: '/icons',
-    name: 'icons',
-    component: () => import('../views/icons/Icons.vue'),
-  },
-  {
-    path: '/cards',
-    name: 'cards',
-    component: () => import('../views/cards/Card.vue'),
-  },
-  {
     path: '/simple-table',
     name: 'simple-table',
     component: () => import('../views/simple-table/SimpleTable.vue'),
-  },
-  {
-    path: '/form-layouts',
-    name: 'form-layouts',
-    component: () => import('../views/form-layouts/FormLayouts.vue'),
   },
   {
     path: '/pages/account-settings',
@@ -172,21 +152,13 @@ const routes = [
   {
     path: '/master/warehouse',
     name: 'master-warehouse',
-    component: () => import('../views/master/user/Index.vue'),
+    component: () => import('../views/master/warehouse/Index.vue'),
   },
   // master
   {
     path: '/login',
     name: 'pages-login',
     component: () => import('../views/pages/Login.vue'),
-    meta: {
-      layout: 'blank',
-    },
-  },
-  {
-    path: '/pages/register',
-    name: 'pages-register',
-    component: () => import('../views/pages/Register.vue'),
     meta: {
       layout: 'blank',
     },

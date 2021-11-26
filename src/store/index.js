@@ -17,6 +17,7 @@ import Person from './modules/Person'
 import Customer from './modules/Customer'
 import Department from './modules/Department'
 import Warehouse from './modules/Warehouse'
+import SubMerek from './modules/SubMerek'
 
 Vue.use(Vuex)
 
@@ -59,6 +60,7 @@ const store = new Vuex.Store({
     Customer: Customer,
     Department: Department,
     Warehouse: Warehouse,
+    SubMerek: SubMerek,
   },
 })
 

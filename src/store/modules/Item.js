@@ -238,10 +238,10 @@ export default {
           .catch(error => reject(error))
       })
     },
-    GET_ITEM_KATEGORI_LIST: ({ commit }, { merek_id }) => {
+    GET_ITEM_KATEGORI_LIST: ({ commit }, { merek_id, submerek_id }) => {
       return new Promise((resolve, reject) => {
         axios
-          .get(`/item-kategori/list?merek_id=` + merek_id)
+          .get(`/item-kategori/list?merek_id=` + merek_id + '&submerek_id=' + submerek_id)
           .then(response => {
             resolve(response)
           })
@@ -514,12 +514,13 @@ export default {
           })
       })
     },
-    UPDATE_ITEM_KATEGORI: ({ commit }, { name, merek_id }) => {
+    UPDATE_ITEM_KATEGORI: ({ commit }, { name, merek_id, sub_merek_id }) => {
       return new Promise((resolve, reject) => {
         axios
           .post('/item-kategori/update/' + id, {
             name: name,
             merek_id: merek_id,
+            sub_merek_id: sub_merek_id,
           })
           .then(res => {
             resolve(res)
@@ -529,12 +530,13 @@ export default {
           })
       })
     },
-    ADD_ITEM_KATEGORI: ({ commit }, { name, merek_id }) => {
+    ADD_ITEM_KATEGORI: ({ commit }, { name, merek_id, sub_merek_id }) => {
       return new Promise((resolve, reject) => {
         axios
           .post('/item-kategori/save', {
             name: name,
             merek_id: merek_id,
+            sub_merek_id: sub_merek_id,
           })
           .then(response => {
             resolve(response)

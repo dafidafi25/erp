@@ -46,11 +46,14 @@
         </thead>
         <tbody>
           <tr v-for="(item, index) in items" :key="index">
-            <td>
+            <td class=" text-center">
               {{ item.type_name }}
             </td>
-            <td>
+            <td class=" text-center">
               {{ item.merek_id }}
+            </td>
+            <td class=" text-center">
+              {{ item.kategori_id }}
             </td>
             <td class="text-center col-1">
               <v-btn @click="onUpdate(index)" max-width="10" min-width="2"
@@ -132,11 +135,15 @@ export default {
       fields: [
         {
           name: 'Tipe Item',
-          class: 'text-uppercase col-2',
+          class: 'text-uppercase col-2 text-center',
         },
         {
           name: 'Merek',
-          class: 'text-uppercase col-2',
+          class: 'text-uppercase col-2 text-center',
+        },
+        {
+          name: 'Kategori',
+          class: 'text-uppercase col-2 text-center',
         },
       ],
     }
@@ -147,7 +154,7 @@ export default {
     },
     onDelete(index) {
       this.$store
-        .dispatch('DELETE_ALAMAT', { id: this.items[index].id })
+        .dispatch('DELETE_ITEM_TYPE', { id: this.items[index].id })
         .then(() => {
           if (this.items.length == 0) {
             this.updateData()

@@ -231,8 +231,6 @@ export default {
       }, 500)
     },
     onResetFilter() {
-      this.filter.kode_akun = ''
-      this.filter.nama_akun = ''
       this.debounceInput()
     },
     currency(index) {

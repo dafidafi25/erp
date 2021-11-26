@@ -18,6 +18,18 @@
               :items="merek_item_list"
               item-text="name"
               item-value="id"
+              @input="gerSubMerekList()"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Sub Merek"
+              required
+              color="error"
+              v-model="sub_merek_id"
+              :items="list.sub_merek"
+              item-text="name"
+              item-value="id"
             />
           </v-col>
         </v-row>
@@ -44,20 +56,23 @@ export default {
     return {
       name: null,
       merek_id: null,
+      sub_merek_id: null,
       id: null,
       valid: null,
+      list: {
+        sub_merek: [],
+      },
     }
   },
   methods: {
     updateData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('UPDATE_ITEM_KATEGORI', {
+          .dispatch('UPDATE_SUB_MEREK', {
             id: this.id,
-            nilai: this.nilai,
-            keterangan: this.keterangan,
-            is_default: this.is_default,
-            active_flag: this.active_flag,
+            name: this.name,
+            merek_id: this.merek_id,
+            sub_merek_id: this.sub_merek_id,
           })
           .then(() => {
             this.$router.go()
@@ -65,15 +80,25 @@ export default {
           .catch(err => console.log(err))
       }
     },
-    async getDataId(id) {
-      await this.$store
+    getDataId(id) {
+      this.$store
         .dispatch('GET_ITEM_KATEGORI_ID', {
           id: id,
         })
         .then(res => {
           this.name = res.data.response_data.name
           this.merek_id = res.data.response_data.merek_id
+          this.sub_merek_id = res.data.response_data.sub_merek_id
+          this.getSubMerekList()
         })
+    },
+    getSubMerekList() {
+      this.$store
+        .dispatch('GET_SUB_MEREK_LIST', {
+          merek_id: this.merek_id,
+        })
+        .then(res => (this.list.sub_merek = res.data.response_data))
+        .catch(err => console.log(err))
     },
   },
   created() {

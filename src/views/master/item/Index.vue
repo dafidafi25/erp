@@ -17,10 +17,13 @@
           <merek @onLoading="loadingDialog" />
         </v-tab-item>
         <v-tab-item>
-          <tipe @onLoading="loadingDialog" />
+          <sub-merek @onLoading="loadingDialog" />
         </v-tab-item>
         <v-tab-item>
           <kategori @onLoading="loadingDialog" />
+        </v-tab-item>
+        <v-tab-item>
+          <tipe @onLoading="loadingDialog" />
         </v-tab-item>
         <v-tab-item>
           <price @onLoading="loadingDialog" />
@@ -47,6 +50,7 @@ import Grade from './Grade/MainMenu.vue'
 import Tipe from './Type/MainMenu.vue'
 import Price from './Price/MainMenu.vue'
 import Merek from './Merek/MainMenu.vue'
+import SubMerek from './SubMerek/MainMenu.vue'
 
 export default {
   data() {
@@ -67,11 +71,16 @@ export default {
         {
           title: 'Merek',
         },
+
         {
-          title: 'Tipe',
+          title: 'Sub Merek',
         },
+
         {
           title: 'Kategori',
+        },
+        {
+          title: 'Tipe',
         },
         {
           title: 'Price',
@@ -86,6 +95,7 @@ export default {
     Tipe,
     Price,
     Merek,
+    SubMerek,
   },
   methods: {
     loadingDialog(value) {

@@ -7,7 +7,7 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field label="Nilai" required color="error" v-model="type_name" />
+            <v-text-field label="Tipe Item" required color="error" v-model="type_name" />
           </v-col>
           <v-col cols="12">
             <v-autocomplete
@@ -18,7 +18,19 @@
               :items="merek_item_list"
               item-text="name"
               item-value="id"
-              @input="getList()"
+              @input="getSubMerekList()"
+            />
+          </v-col>
+          <v-col cols="12">
+            <v-autocomplete
+              label="Sub Merek Item"
+              required
+              color="error"
+              v-model="sub_merek_id"
+              :items="list.sub_merek"
+              item-text="name"
+              item-value="id"
+              @input="getKategoriList()"
             />
           </v-col>
           <v-col cols="12">
@@ -55,10 +67,12 @@ export default {
     return {
       type_name: null,
       merek_id: null,
+      sub_merek_id: null,
       kategori_id: null,
       valid: null,
       list: {
         kategori: [],
+        sub_merek: [],
       },
     }
   },
@@ -77,12 +91,22 @@ export default {
           .catch(err => console.log(err))
       }
     },
-    async getList() {
+    async getKategoriList() {
+      console.log(this.submerek_id)
       await this.$store
         .dispatch('GET_ITEM_KATEGORI_LIST', {
           merek_id: this.merek_id,
+          submerek_id: this.sub_merek_id,
         })
         .then(res => (this.list.kategori = res.data.response_data))
+        .catch(err => console.log(err))
+    },
+    async getSubMerekList() {
+      await this.$store
+        .dispatch('GET_SUB_MEREK_LIST', {
+          merek_id: this.merek_id,
+        })
+        .then(res => (this.list.sub_merek = res.data.response_data))
         .catch(err => console.log(err))
     },
   },

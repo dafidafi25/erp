@@ -7,16 +7,19 @@
       <v-container>
         <v-row>
           <v-col cols="12">
-            <v-text-field
-              label="Satuan*"
-              required
-              color="error"
-              v-model="uom_code"
-              :rules="[v => !!v || 'Satuan Harus Diisi']"
-            />
+            <v-text-field label="Sub Merek" required color="error" v-model="name" />
           </v-col>
           <v-col cols="12">
-            <v-text-field label="Deskripsi" required color="error" v-model="description" />
+            <v-autocomplete
+              label="Merek Item"
+              required
+              color="error"
+              v-model="merek_id"
+              :items="merek_item_list"
+              item-text="name"
+              item-value="id"
+              item-color="error"
+            />
           </v-col>
         </v-row>
       </v-container>
@@ -37,26 +40,22 @@
 <script>
 import { EventBus } from './event-bus.js'
 export default {
-  props: ['data'],
+  props: ['merek_item_list', 'data'],
   data() {
     return {
-      uom_code: null,
-      description: null,
-      valid: true,
+      merek_id: null,
+      name: null,
       id: null,
+      valid: null,
     }
   },
   methods: {
     updateData() {
       if (this.$refs.form.validate()) {
         this.$store
-          .dispatch('UPDATE_SATUAN', {
+          .dispatch('UPDATE_MEREK_ITEM', {
             id: this.id,
-            uom_code: this.uom_code,
-            description: this.description,
-            base_uom_flag: 1,
-            active_flag: 1,
-            primary_flag: 1,
+            name: this.name,
           })
           .then(() => {
             this.$router.go()
@@ -64,17 +63,18 @@ export default {
           .catch(err => console.log(err))
       }
     },
-    async getDataId(id) {
-      await this.$store
-        .dispatch('GET_SATUAN_ID', {
+    getDataId(id) {
+      this.$store
+        .dispatch('GET_SUB_MEREK_ID', {
           id: id,
         })
         .then(res => {
-          this.uom_code = res.data.response_data.uom_code
-          this.description = res.data.response_data.description
+          this.name = res.data.response_data.name
+          this.merek_id = res.data.response_data.merek_id
         })
     },
   },
+  beforeCreate() {},
   created() {
     EventBus.$on('onUpdate', value => {
       this.id = value

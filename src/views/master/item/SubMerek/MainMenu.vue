@@ -21,13 +21,13 @@
     <!-- add Dialog -->
     <v-dialog max-width="600px" v-model="TriggerAddModal">
       <v-card>
-        <add-modal @onAddClicked="addItem" />
+        <add-modal @onAddClicked="addItem" :merek_item_list="merek_item_list" />
       </v-card>
     </v-dialog>
     <!-- edit Dialog -->
     <v-dialog max-width="600px" v-model="TriggerUpdateModal">
       <v-card>
-        <edit-modal @onUpdateClicked="updateItem" :data="data" />
+        <edit-modal @onUpdateClicked="updateItem" :data="data" :merek_item_list="merek_item_list" />
       </v-card>
     </v-dialog>
   </div>
@@ -46,6 +46,7 @@ export default {
       TriggerAddModal: null,
       TriggerUpdateModal: null,
       data: null,
+      merek_item_list: null,
     }
   },
   components: {
@@ -70,6 +71,12 @@ export default {
     addItem() {
       this.TriggerAddModal = !this.TriggerAddModal
     },
+  },
+  mounted() {
+    this.$store
+      .dispatch('GET_MEREK_ITEM_LIST')
+      .then(res => (this.merek_item_list = res.data.response_data))
+      .catch(err => console.log(err))
   },
 }
 </script>
